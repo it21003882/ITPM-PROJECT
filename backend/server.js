@@ -1,67 +1,87 @@
-import express from 'express'
-import dotenv from 'dotenv'
-import colors from 'colors'
-import morgan from 'morgan'
-import connectDB from './config/db.js'
-import cors from 'cors'
-import path from 'path'
+import express from "express";
+import mongoose from "mongoose";
+import bodyParser from "body-parser";
+import cors from "cors";
+import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+import { v4 as uuid } from "uuid";
+import stripePackage from "stripe";
 
-//routes
-import userRoutes from './routes/userRoutes.js'
-import uploadRoutes from './routes/uploadRoutes.js'
+const stripe = stripePackage("sk_test_51N0lfXFXk7msLsjQ6vw8w5kINoWWGsj9QQx9ysglHl13PVHbvAuaLALLmpIZOUkmAHWz8uxaRSy8VIENCeen9QFZ00SAcHSDTZ");
+
+const filePath = fileURLToPath(import.meta.url);
+const dirName = path.dirname(filePath);
+const app = express();
+const PORT = process.env.PORT || 5000;
+app.use(express.static(path.join(dirName, "uploads")));
+dotenv.config();
+app.use(cors());
+app.use(bodyParser.json());
+
+const URL = process.env.MONGO_DB;
+
+mongoose.connect(URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+app.listen(PORT, () => {
+  console.log("***************************************");
+  console.log(`Server Running on port number : ${PORT}`);
+});
+
+const connection = mongoose.connection;
+connection.once("open", () => {
+  console.log("MONGO_DB Connection successfull......!!");
+  console.log("***************************************");
+});
 
 
+//amanda
+import Event from "./routers/Event.js";
+app.use("/event", Event);
 
-import productRoutes from './routes/productRoutes.js'
-import orderRoutes from './routes/orderRoutes.js'
+import Volunteer from "./routers/Volunteer.js";
+app.use("/volunteer", Volunteer);
 
+import User from "./routers/User.js";
+app.use("/user", User);
 
-dotenv.config()
+import Admin from "./routers/Admin.js";
+app.use("/admin", Admin);
 
-//connect database
-connectDB()
+import Certificate from "./routers/E-Certificate.js";
+app.use("/certificate", Certificate);
 
-const app = express()
+//Methmal 
+import Donate from "./routers/Donate.js";
+app.use("/donate", Donate);
 
-if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'))
-}
+app.post("/payemnt",(req,res) => {
+  const {products, token} = req.body;
+  console.log("Product",products);
+  console.log("Price",products.price);
 
-app.use(cors())
-app.use(express.json())
+  const idempontencyKey = uuid();
 
-//calling routes
-app.use('/api/users', userRoutes)
-app.use('/api/uploads', uploadRoutes)
-app.use('/api/orders', orderRoutes)
-
-const __dirname = path.resolve()
-app.use('/images', express.static(path.join(__dirname, '/images')))
-app.use('/api/products', productRoutes)
-
-//paypal id connect
-app.get('/api/config/paypal', (req, res) =>
-  res.send(process.env.PAYPAL_CLIENT_ID)
-)
-
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '/frontend/build')))
-
-  app.get('*', (req, res) =>
-    res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'))
-  )
-} else {
-  app.get('/', (req, res) => {
-    res.send('API is running...')
-  })
-}
-
-//create port
-const PORT = process.env.PORT || 6500
-
-app.listen(
-  PORT,
-  console.log(
-    `server running in ${process.env.NODE_ENV} port ${PORT}`.yellow.bold
-  )
-)
+  return stripe.customers.create({
+      email: token.email,
+      source:token.id
+  }).then(customer => {
+      stripe.charges.create({
+          amount: products.price * 1000,
+          currency: 'usd',
+          customer: customer.id,
+          receipt_email: token.email,
+          description: products.name,
+          shipping:{
+              name:token.card.name,
+              address:{
+                  country:token.card.address_country
+              }
+          }
+      },{idempontencyKey})
+  }).then(result => res.status(200).json(result))
+  .catch(err => console.log(err))
+})
