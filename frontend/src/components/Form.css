@@ -1,0 +1,18 @@
+.btn btn-success{
+    margin-right: 20%;
+    margin:500px;
+}
+
+
+.remove-btn{
+    list-style-type: none;
+}
+.form-border{
+    width: 1000px;
+    border: 5px solid green;
+    padding: 50px;
+    margin: 10%;
+    background-color:beige;
+    flex:content;
+    
+}
