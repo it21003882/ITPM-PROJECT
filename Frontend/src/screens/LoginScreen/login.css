@@ -1,0 +1,10 @@
+.login,
+.image {
+  min-height: 100vh;
+}
+.bg-image {
+  background-image: url('../LoginScreen/log.jpg');
+  background-size: cover;
+  background-position: 100% 35%;
+
+}
