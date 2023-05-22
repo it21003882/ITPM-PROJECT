@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 
+
 const filePath = fileURLToPath(import.meta.url);
 const dirName = path.dirname(filePath);
 const app = express();
@@ -49,3 +50,4 @@ app.use("/admin", Admin);
 
 import Certificate from "./routers/E-Certificate.js";
 app.use("/certificate", Certificate);
+
