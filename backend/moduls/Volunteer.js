@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-
+//volunteer form eke structure eka create krnwa
 const schema = mongoose.Schema;
 
 const volunteerSchema = new schema({
@@ -40,4 +40,4 @@ const volunteerSchema = new schema({
 
 })
 
-export default mongoose.model("volunteer",volunteerSchema);
+export default mongoose.model("volunteer",volunteerSchema);  //volunteer form eke structure eka save wenwa database ekata
