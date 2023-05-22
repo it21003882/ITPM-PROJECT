@@ -5,10 +5,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
-import { v4 as uuid } from "uuid";
-import stripePackage from "stripe";
 
-const stripe = stripePackage("sk_test_51N0lfXFXk7msLsjQ6vw8w5kINoWWGsj9QQx9ysglHl13PVHbvAuaLALLmpIZOUkmAHWz8uxaRSy8VIENCeen9QFZ00SAcHSDTZ");
 
 const filePath = fileURLToPath(import.meta.url);
 const dirName = path.dirname(filePath);
@@ -54,34 +51,3 @@ app.use("/admin", Admin);
 import Certificate from "./routers/E-Certificate.js";
 app.use("/certificate", Certificate);
 
-//Methmal 
-import Donate from "./routers/Donate.js";
-app.use("/donate", Donate);
-
-app.post("/payemnt",(req,res) => {
-  const {products, token} = req.body;
-  console.log("Product",products);
-  console.log("Price",products.price);
-
-  const idempontencyKey = uuid();
-
-  return stripe.customers.create({
-      email: token.email,
-      source:token.id
-  }).then(customer => {
-      stripe.charges.create({
-          amount: products.price * 1000,
-          currency: 'usd',
-          customer: customer.id,
-          receipt_email: token.email,
-          description: products.name,
-          shipping:{
-              name:token.card.name,
-              address:{
-                  country:token.card.address_country
-              }
-          }
-      },{idempontencyKey})
-  }).then(result => res.status(200).json(result))
-  .catch(err => console.log(err))
-})
