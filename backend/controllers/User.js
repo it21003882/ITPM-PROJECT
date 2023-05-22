@@ -61,11 +61,11 @@ export const UserRegister = async (req, res) => {
   }
 }
 
-export const Signin = async (req, res) => {
+export const Signin = async (req, res) => {       
   try {
     
     /*console.log(req.body.email)*/
-    const RegisterdUser = await User.findOne({ email: req.body.email });
+    const RegisterdUser = await User.findOne({ email: req.body.email });  //walin login credentials harida balnwa
    // console.log(RegisterdUser)  
     if (RegisterdUser) {
       const enterdPwd = req.body.password;
@@ -73,7 +73,7 @@ export const Signin = async (req, res) => {
       const uid = RegisterdUser._id;
       //console.log(enterdPwd,dbPwd);
       console.log(uid);
-      if (enterdPwd === dbPwd) {
+      if (enterdPwd === dbPwd) {                  //methana idan JWT token use krnwa
         const token = jwt.sign({ email: req.body.email }, process.env.JWT_TOKEN_KEY, { expiresIn: '1h'});
         const refreshToken = jwt.sign({ email: req.body.email }, process.env.REFRESH_TOKEN_KEY, { expiresIn: '24h' });
         // console.log("token  "+token)
