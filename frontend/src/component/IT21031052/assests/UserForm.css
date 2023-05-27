@@ -1,0 +1,31 @@
+.btn btn-success {
+  margin-right: 20%;
+  margin: 500px;
+}
+
+.remove-btn {
+  list-style-type: none;
+}
+.form-border {
+  width: 1000px;
+  border: 5px solid green;
+  padding: 50px;
+  margin: 10%;
+  background-color: beige;
+  flex: content;
+}
+
+.evidanceImage {
+  height: 150px;
+  width: 150px;
+  align-items: center;
+}
+
+.userForm {
+  background-image: url('../images/background.jpg');
+}
+.font {
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
+    'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  color: rgb(254, 143, 8);
+}
