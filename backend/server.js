@@ -85,3 +85,10 @@ app.post("/payemnt",(req,res) => {
   }).then(result => res.status(200).json(result))
   .catch(err => console.log(err))
 })
+
+//Buddhika
+import Form from "./routers/Form.js";
+app.use("/report", Form);
+
+import Map from "./routers/Map.js";
+app.use("/map", Map);
